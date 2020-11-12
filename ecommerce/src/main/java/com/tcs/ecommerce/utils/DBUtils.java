@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DBUtils {
 
 	public static Connection getConnection() {
-		final String url = "jdbc:mysql://localhost:3306/tcs";
+		final String url = "jdbc:mysql://localhost:3306/TCS";
 		final String username = "root";
 		final String password = "MYSQL123$";
 		Connection connection = null;
