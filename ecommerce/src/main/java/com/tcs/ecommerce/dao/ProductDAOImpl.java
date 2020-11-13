@@ -7,29 +7,35 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.tcs.ecommerce.model.Product;
 import com.tcs.ecommerce.utils.DBUtils;
 
+@Repository 
 public class ProductDAOImpl implements ProductDAO {
 	
-	private static ProductDAOImpl productDAOImpl;
+	@Autowired
+	private DBUtils dbUtils;
 	
-	public static synchronized ProductDAO getInstance() {
-		if(productDAOImpl == null)
-			productDAOImpl = new ProductDAOImpl();
-		return productDAOImpl;
-	}
-	
-	private ProductDAOImpl() {}
+//	private static ProductDAOImpl productDAOImpl;
+//	
+//	public static synchronized ProductDAO getInstance() {
+//		if(productDAOImpl == null)
+//			productDAOImpl = new ProductDAOImpl();
+//		return productDAOImpl;
+//	}
+//	
+//	private ProductDAOImpl() {}
 
 	@Override
 	public String createProduct(Product product) {
-		Connection connection = DBUtils.getConnection();
+		Connection connection = dbUtils.getConnection();
 		int result = 0;
 		String insertProduct = "insert into product (productId, productName, description, "
 				+ "category, price) values(?,?,?,?,?)";
 		try {
-			connection.setAutoCommit(false);
 			PreparedStatement preparedStatement = connection.prepareStatement(insertProduct);
 			preparedStatement.setInt(1, product.getProductId());
 			preparedStatement.setString(2, product.getProductName());
@@ -53,13 +59,13 @@ public class ProductDAOImpl implements ProductDAO {
 			e.printStackTrace();
 			return "fail";
 		} finally {
-			DBUtils.closeConnection(connection);
+			dbUtils.closeConnection(connection);
 		}
 	}
 
 	@Override
 	public Optional<Product> getProductById(int id) {
-		Connection connection = DBUtils.getConnection();
+		Connection connection = dbUtils.getConnection();
 		Product product = null;
 		ResultSet resultSet = null;
 		String query = "select * from product where productId=?";
@@ -78,15 +84,10 @@ public class ProductDAOImpl implements ProductDAO {
 				product.setPrice(resultSet.getFloat("price"));
 			}
 		} catch (SQLException e) {
-			try {
-				connection.rollback();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
 			e.printStackTrace();
 			return Optional.empty();
 		} finally {
-			DBUtils.closeConnection(connection);
+			dbUtils.closeConnection(connection);
 		}
 		return Optional.of(product);
 	}
