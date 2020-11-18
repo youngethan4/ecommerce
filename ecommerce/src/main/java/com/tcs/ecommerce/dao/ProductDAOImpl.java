@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.tcs.ecommerce.model.Product;
 import com.tcs.ecommerce.utils.DBUtils;
 
-@Repository 
+//@Repository 
 public class ProductDAOImpl implements ProductDAO {
 	
 	@Autowired
